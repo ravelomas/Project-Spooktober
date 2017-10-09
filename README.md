@@ -1,2 +1,1 @@
-# Project-Spooktober
-HELLO
+# Project-Spooktober HELLO
