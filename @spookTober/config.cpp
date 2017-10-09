@@ -8,11 +8,7 @@ class CfgPatches {
     
     requiredVersion = 0.1;
     
-    requiredAddons[] = {
-      // ACE3 addon name
-      // Ryans Zombies addon name
-      // ACER radio addon name
-    };
+    requiredAddons[] = {};
   
   };
 
