@@ -8,7 +8,11 @@ class CfgPatches {
     
     requiredVersion = 0.1;
     
-    requiredAddons[] = {};
+    requiredAddons[] = {
+      // ACE3 addon name
+      // Ryans Zombies addon name
+      // ACER radio addon name
+    };
   
   };
 
@@ -22,9 +26,9 @@ class functions {
     
     class spookTober_zombieSpawn {};
     
-    class spookTober_randoimSpawn {};
+    class spookTober_randomSpawnLocation {};
     
-    class spookTober_respawn {};
+    class spookTober_respawnLocation {};
   
   };
 
