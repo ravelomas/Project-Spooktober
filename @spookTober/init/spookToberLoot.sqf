@@ -32,6 +32,8 @@ _weapon = _lootArray select 0;
 
 //====================================================================================
 
+private ["_unit"];
+
 // (1) first lets grab the center of the map to spawn our empty marker...
 
 // (2) now lets grab the width and height of the map to place into our marker...
