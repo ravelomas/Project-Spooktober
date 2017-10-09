@@ -28,6 +28,8 @@ _lootArray = [
 
 ];
 
+_weapon = _lootArray select 0;
+
 //====================================================================================
 
 // (1) first lets grab the center of the map to spawn our empty marker...
