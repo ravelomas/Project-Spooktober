@@ -1,4 +1,4 @@
-//====================================================================================
+private ["_unit"];
 
 _lootArray = [
 
@@ -28,14 +28,11 @@ _lootArray = [
 
 ];
 
-_weapon = _lootArray select 0;
-
-//====================================================================================
-
-private ["_unit"];
-
-// (1) first lets grab the center of the map to spawn our empty marker...
-
-// (2) now lets grab the width and height of the map to place into our marker...
-
-// (3) spawn empty marker int the center and set height and with...
+// SETUP VARIABLES TO REFERENCE NESTED ARRAYS FOR APORIS =======
+_weaponsArray = _lootArray select 0;
+_ammunitionArray = _lootArray select 1;
+_itemsArray = _lootArray select 2;
+_clothingArray = _lootArray select 3;
+_headgearArray = _lootArray select 4;
+_survivalitemsArray = _lootArray select 5;
+//==============================================================
