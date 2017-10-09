@@ -30,22 +30,8 @@ _lootArray = [
 
 //====================================================================================
 
-_markerPos = getMarkerPos "NAME-HERE"; // A marker covering the map
+// (1) first lets grab the center of the map to spawn our empty marker...
 
-_houseArray = _markerPos nearObjects [ "house", 100000 ]; // Get houses that are within 10000 of the marker center
+// (2) now lets grab the width and height of the map to place into our marker...
 
-{
-
-  _buildingPositions = [_x] call BIS_fnc_buildingPositions;
-  
-  {
-  
-    if ( 2 > random 100 ) then { // 2% chance of spawning item
-    
-      // spawn code here for each house
-    
-    };
-  
-  } forEach _buildingPositions;
-
-forEach _houseArray;
+// (3) spawn empty marker int the center and set height and with...
