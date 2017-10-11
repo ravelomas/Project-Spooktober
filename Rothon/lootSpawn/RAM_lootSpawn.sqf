@@ -65,7 +65,7 @@ _spawnLoot = [] spawn {
 
 		{
 
-			if ( ( _x getVariable [ "hasLoot", true ] ) == false ) then {
+			if ( ( _x getVariable ["hasLoot", 0] ) == 0 ) then {
 
 				_buildingPositions = [_x] call BIS_fnc_buildingPositions;
 
@@ -155,7 +155,7 @@ _spawnLoot = [] spawn {
 
 				} forEach _buildingPositions; // each building position
 
-				_x setVariable ["hasLoot", true];
+				_x setVariable ["hasLoot", 1];
 
 			}; // end variable check
 
