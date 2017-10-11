@@ -46,6 +46,14 @@ _spawnLoot = [] spawn {
 		"acc_flashlight"	
 	];
 
+	_weaponLootArray = _lootArray select 0;
+	_ammoLootArray = _lootArray select 1;
+	_vestLootArray = _lootArray select 2;
+	_backpackLootArray = _lootArray select 3;
+	_clothingLootArray = _lootArray select 4;
+	_headgearLootArray = _lootArray select 5;
+	_survivalLootArray = _lootArray select 6;
+
 	while { _activateLootSpawn } do {
 
 		_buildings = player nearObjects [ "House", _spawnDistance ];
@@ -60,10 +68,36 @@ _spawnLoot = [] spawn {
 
 					if ( _spawnChance > random 100 ) then {
 
-						_itemHolder = "WeaponHolderSimulated" createVehicle [0,0,0];
-						_itemHolder setPos _x;
-						_itemHolder addWeaponCargoGlobal [ _lootArray call BIS_fnc_selectRandom, 1];
+						_lootType = _lootArray call BIS_fnc_selectRandom;
 
+						// Weapon type loot
+						if ( _lootType == 0 ) then {
+
+							_itemHolder = "WeaponHolderSimulated" createVehicle [0,0,0];
+							_itemHolder setPos _x;
+							_itemHolder addWeaponCargoGlobal [ _lootArray call BIS_fnc_selectRandom, 1];
+
+						};
+
+						// Ammo type loot
+						if ( _lootType == 1 ) then {};
+
+						// Vest type loot
+						if ( _lootType == 2 ) then {};
+
+						// Backpack type loot
+						if ( _lootType == 3 ) then {};
+
+						// Clothing type loot
+						if ( _lootType == 4 ) then {};
+
+						// Headgear type loot
+						if ( _lootType == 5 ) then {};
+
+						// Survival type loot
+						if ( _lootType == 6 ) then {};
+
+						// Enable debug
 						if ( _enableDebug ) then {
 							_markerID = format["%1", _x];
 							_debug = createMarker [_markerID, getPos _itemHolder];
