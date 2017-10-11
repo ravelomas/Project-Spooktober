@@ -8,7 +8,7 @@ _spawnLoot = [] spawn {
 
 	_spawnDistance = 80;
 
-	_spawnChance = 0.1;
+	_spawnChance = 5;
 
 	_enableDebug = true;
 
@@ -16,30 +16,37 @@ _spawnLoot = [] spawn {
 
 		[
 			// Weapons
+			"arifle_AK12_F"
 		],
 
 		[
 			// Ammo
+			"arifle_AK12_F"
 		],
 
 		[
 			// Vests
+			"arifle_AK12_F"
 		],
 
 		[
 			// Backpack
+			"arifle_AK12_F"
 		],
 
 		[
 			// Clothing
+			"arifle_AK12_F"
 		],
 
 		[
 			// Headgear
+			"arifle_AK12_F"
 		],
 
 		[
 			// Survival
+			"arifle_AK12_F"
 		]
 
 	];
@@ -57,102 +64,108 @@ _spawnLoot = [] spawn {
 		_buildings = player nearObjects [ "House", _spawnDistance ];
 
 		{
-			_building = _x;
-			_buildingPositions = [_x] call BIS_fnc_buildingPositions;
 
-			{
+			if ( ( _x getVariable [ "hasLoot", true ] ) == false ) then {
 
-				if ( player distance _x <= _spawnDistance ) then {
+				_buildingPositions = [_x] call BIS_fnc_buildingPositions;
 
-					if ( _spawnChance > random 100 ) then {
+				{
 
-						_lootType = floor ( random 7);
+						if ( player distance _x <= _spawnDistance ) then {
 
-						// Enable debug
-						if ( _enableDebug ) then {
-							_markerID = format["%1", _x];
-							_debug = createMarker [_markerID, getPos _itemHolder];
-							_debug setMarkerType "mil_dot";
-							_debug setMarkerColor "ColorRed";
-						};
 
-						// Weapon type loot
-						if ( _lootType == 0 ) then {
+							if ( _spawnChance > random 100 ) then {
+								
+								_lootType = floor ( random 7);
 
-							_itemHolder = "WeaponHolderSimulated" createVehicle [0,0,0];
-							_itemHolder setPos _x;
-							_itemHolder addWeaponCargoGlobal [ _weaponLootArray call BIS_fnc_selectRandom, 1];
+								// Weapon type loot
+								if ( _lootType == 0 ) then {
 
-						};
+									_itemHolder = "WeaponHolderSimulated" createVehicle [0,0,0];
+									_itemHolder setPos _x;
+									_itemHolder addWeaponCargoGlobal [ _weaponLootArray call BIS_fnc_selectRandom, 1];
 
-						// Ammo type loot
-						if ( _lootType == 1 ) then {
+								};
 
-							_itemHolder = "WeaponHolderSimulated" createVehicle [0,0,0];
-							_itemHolder setPos _x;
-							_itemHolder addMagazineCargoGlobal [ _ammoLootArray call BIS_fnc_selectRandom, 1];
+								// Ammo type loot
+								if ( _lootType == 1 ) then {
 
-						};
+									_itemHolder = "WeaponHolderSimulated" createVehicle [0,0,0];
+									_itemHolder setPos _x;
+									_itemHolder addWeaponCargoGlobal [ _ammoLootArray call BIS_fnc_selectRandom, 1];
 
-						// Vest type loot
-						if ( _lootType == 2 ) then {
+								};
 
-							_itemHolder = "WeaponHolderSimulated" createVehicle [0,0,0];
-							_itemHolder setPos _x;
-							_itemHolder addItemCargoGlobal [ _vestLootArray call BIS_fnc_selectRandom, 1];
+								// Vest type loot
+								if ( _lootType == 2 ) then {
 
-						};
+									_itemHolder = "WeaponHolderSimulated" createVehicle [0,0,0];
+									_itemHolder setPos _x;
+									_itemHolder addWeaponCargoGlobal [ _vestLootArray call BIS_fnc_selectRandom, 1];
 
-						// Backpack type loot
-						if ( _lootType == 3 ) then {
+								};
 
-							_itemHolder = "WeaponHolderSimulated" createVehicle [0,0,0];
-							_itemHolder setPos _x;
-							_itemHolder addBackpackCargoGlobal [ _backpackLootArray call BIS_fnc_selectRandom, 1];
+								// Backpack type loot
+								if ( _lootType == 3 ) then {
 
-						};
+									_itemHolder = "WeaponHolderSimulated" createVehicle [0,0,0];
+									_itemHolder setPos _x;
+									_itemHolder addWeaponCargoGlobal [ _backpackLootArray call BIS_fnc_selectRandom, 1];
 
-						// Clothing type loot
-						if ( _lootType == 4 ) then {
+								};
 
-							_itemHolder = "WeaponHolderSimulated" createVehicle [0,0,0];
-							_itemHolder setPos _x;
-							_itemHolder addItemCargoGlobal [ _clothingLootArray call BIS_fnc_selectRandom, 1];
+								// Clothing type loot
+								if ( _lootType == 4 ) then {
 
-						};
+									_itemHolder = "WeaponHolderSimulated" createVehicle [0,0,0];
+									_itemHolder setPos _x;
+									_itemHolder addWeaponCargoGlobal [ _clothingLootArray call BIS_fnc_selectRandom, 1];
 
-						// Headgear type loot
-						if ( _lootType == 5 ) then {
+								};
 
-							_itemHolder = "WeaponHolderSimulated" createVehicle [0,0,0];
-							_itemHolder setPos _x;
-							_itemHolder addWeaponCargoGlobal [ _headgearLootArray call BIS_fnc_selectRandom, 1];
+								// Headgear type loot
+								if ( _lootType == 5 ) then {
 
-						};
+									_itemHolder = "WeaponHolderSimulated" createVehicle [0,0,0];
+									_itemHolder setPos _x;
+									_itemHolder addWeaponCargoGlobal [ _headgearLootArray call BIS_fnc_selectRandom, 1];
 
-						// Survival type loot
-						if ( _lootType == 6 ) then {
+								};
 
-							_itemHolder = "WeaponHolderSimulated" createVehicle [0,0,0];
-							_itemHolder setPos _x;
-							_itemHolder addItemCargoGlobal [ _survivalLootArray call BIS_fnc_selectRandom, 1];
+								// Survival type loot
+								if ( _lootType == 6 ) then {
 
-						};
+									_itemHolder = "WeaponHolderSimulated" createVehicle [0,0,0];
+									_itemHolder setPos _x;
+									_itemHolder addWeaponCargoGlobal [ _survivalLootArray call BIS_fnc_selectRandom, 1];
 
-					}; // loot spawn chance
+								};
 
-				}; // player distance
+								// Enable debug
+								if ( _enableDebug ) then {
+									_markerID = format["%1", _x];
+									_debug = createMarker [_markerID, _x];
+									_debug setMarkerType "mil_dot";
+									_debug setMarkerColor "ColorRed";
+								};
 
-			} forEach _buildingPositions; // each building position
+							}; // loot spawn chance
+
+						}; // player distance
+
+				} forEach _buildingPositions; // each building position
+
+				_x setVariable ["hasLoot", true];
+
+			}; // end variable check
 
 		} forEach _buildings; // each building
 
-		sleep 0.1;
+		sleep 1;
 
 	}; // while loop
 
 }; // end...
-
 
 //=================================================================================
 // _building setVariable ["ExileLootWeaponHolderNetIDs", _lootWeaponHolderNetIDs];
