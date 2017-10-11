@@ -26,7 +26,7 @@ ST_fnc_spawnSurvivalLoot = {
 
 		{
 
-			if ( player distance _x >= 150 ) then {
+			if ( player distance _x <= _spawnDistance ) then {
 
 				for '_i' from 0 to 50 do {
 
