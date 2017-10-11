@@ -82,7 +82,7 @@ _spawnLoot = [] spawn {
 
 							_itemHolder = "WeaponHolderSimulated" createVehicle [0,0,0];
 							_itemHolder setPos _x;
-							_itemHolder addWeaponCargoGlobal [ _ammoLootArray call BIS_fnc_selectRandom, 1];
+							_itemHolder addMagazineCargoGlobal [ _ammoLootArray call BIS_fnc_selectRandom, 1];
 
 						};
 
@@ -91,7 +91,7 @@ _spawnLoot = [] spawn {
 
 							_itemHolder = "WeaponHolderSimulated" createVehicle [0,0,0];
 							_itemHolder setPos _x;
-							_itemHolder addWeaponCargoGlobal [ _vestLootArray call BIS_fnc_selectRandom, 1];
+							_itemHolder addItemCargoGlobal [ _vestLootArray call BIS_fnc_selectRandom, 1];
 
 						};
 
@@ -100,7 +100,7 @@ _spawnLoot = [] spawn {
 
 							_itemHolder = "WeaponHolderSimulated" createVehicle [0,0,0];
 							_itemHolder setPos _x;
-							_itemHolder addWeaponCargoGlobal [ _backpackLootArray call BIS_fnc_selectRandom, 1];
+							_itemHolder addBackpackCargoGlobal [ _backpackLootArray call BIS_fnc_selectRandom, 1];
 
 						};
 
@@ -109,7 +109,7 @@ _spawnLoot = [] spawn {
 
 							_itemHolder = "WeaponHolderSimulated" createVehicle [0,0,0];
 							_itemHolder setPos _x;
-							_itemHolder addWeaponCargoGlobal [ _clothingLootArray call BIS_fnc_selectRandom, 1];
+							_itemHolder addItemCargoGlobal [ _clothingLootArray call BIS_fnc_selectRandom, 1];
 
 						};
 
@@ -127,7 +127,7 @@ _spawnLoot = [] spawn {
 
 							_itemHolder = "WeaponHolderSimulated" createVehicle [0,0,0];
 							_itemHolder setPos _x;
-							_itemHolder addWeaponCargoGlobal [ _survivalLootArray call BIS_fnc_selectRandom, 1];
+							_itemHolder addItemCargoGlobal [ _survivalLootArray call BIS_fnc_selectRandom, 1];
 							
 						};
 
