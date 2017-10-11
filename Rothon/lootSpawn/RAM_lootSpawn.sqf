@@ -2,7 +2,7 @@ if !(isServer) exitWith {};
 
 _spawnLoot = [] spawn {
 
-	waitUntil { time > 5 };
+	waitUntil { time > 0 };
 
 	_activateLootSpawn = true;
 
