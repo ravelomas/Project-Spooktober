@@ -13,37 +13,35 @@ _spawnLoot = [] spawn {
 	_enableDebug = true;
 
 	_lootArray = [
-		"arifle_AK12_F",
-		"arifle_AKM_F",
-		"arifle_CTAR_ghex_F",
-		"arifle_Katiba_F",
-		"arifle_Mk20_GL_plain_F",
-		"arifle_MX_GL_F",
-		"arifle_MX_F",
-		"arifle_MXC_Black_F",
-		"arifle_MXM_Black_F",
-		"arifle_MXM_khk_F",
-		"arifle_SPAR_01_snd_F",
-		"arifle_SPAR_02_khk_F",
-		"arifle_TRG21_GL_F",
-		"arifle_ARX_hex_F",
-		"launch_RPG32_F",
-		"launch_I_Titan_F",
-		"launch_B_Titan_F",
-		"launch_I_Titan_short_F",
-		"LMG_Mk200_F",
-		"MMG_01_hex_F",
-		"MMG_02_sand_F",
-		"hgun_P07_F",
-		"hgun_Pistol_01_F",
-		"hgun_Pistol_Signal_F",
-		"srifle_DMR_07_ghex_F",
-		"srifle_GM6_F",
-		"optic_ACO_grn_smg",
-		"optic_Holosight_khk_F",
-		"acc_pointer_IR",
-		"acc_flashlight_pistol",
-		"acc_flashlight"	
+
+		[
+			// Weapons
+		],
+
+		[
+			// Ammo
+		],
+
+		[
+			// Vests
+		],
+
+		[
+			// Backpack
+		],
+
+		[
+			// Clothing
+		],
+
+		[
+			// Headgear
+		],
+
+		[
+			// Survival
+		]
+
 	];
 
 	_weaponLootArray = _lootArray select 0;
@@ -59,7 +57,7 @@ _spawnLoot = [] spawn {
 		_buildings = player nearObjects [ "House", _spawnDistance ];
 
 		{
-
+			_building = _x;
 			_buildingPositions = [_x] call BIS_fnc_buildingPositions;
 
 			{
@@ -75,27 +73,63 @@ _spawnLoot = [] spawn {
 
 							_itemHolder = "WeaponHolderSimulated" createVehicle [0,0,0];
 							_itemHolder setPos _x;
-							_itemHolder addWeaponCargoGlobal [ _lootArray call BIS_fnc_selectRandom, 1];
+							_itemHolder addWeaponCargoGlobal [ _weaponLootArray call BIS_fnc_selectRandom, 1];
 
 						};
 
 						// Ammo type loot
-						if ( _lootType == 1 ) then {};
+						if ( _lootType == 1 ) then {
+
+							_itemHolder = "WeaponHolderSimulated" createVehicle [0,0,0];
+							_itemHolder setPos _x;
+							_itemHolder addWeaponCargoGlobal [ _ammoLootArray call BIS_fnc_selectRandom, 1];
+
+						};
 
 						// Vest type loot
-						if ( _lootType == 2 ) then {};
+						if ( _lootType == 2 ) then {
+
+							_itemHolder = "WeaponHolderSimulated" createVehicle [0,0,0];
+							_itemHolder setPos _x;
+							_itemHolder addWeaponCargoGlobal [ _vestLootArray call BIS_fnc_selectRandom, 1];
+
+						};
 
 						// Backpack type loot
-						if ( _lootType == 3 ) then {};
+						if ( _lootType == 3 ) then {
+
+							_itemHolder = "WeaponHolderSimulated" createVehicle [0,0,0];
+							_itemHolder setPos _x;
+							_itemHolder addWeaponCargoGlobal [ _backpackLootArray call BIS_fnc_selectRandom, 1];
+
+						};
 
 						// Clothing type loot
-						if ( _lootType == 4 ) then {};
+						if ( _lootType == 4 ) then {
+
+							_itemHolder = "WeaponHolderSimulated" createVehicle [0,0,0];
+							_itemHolder setPos _x;
+							_itemHolder addWeaponCargoGlobal [ _clothingLootArray call BIS_fnc_selectRandom, 1];
+
+						};
 
 						// Headgear type loot
-						if ( _lootType == 5 ) then {};
+						if ( _lootType == 5 ) then {
+
+							_itemHolder = "WeaponHolderSimulated" createVehicle [0,0,0];
+							_itemHolder setPos _x;
+							_itemHolder addWeaponCargoGlobal [ _headgearLootArray call BIS_fnc_selectRandom, 1];
+
+						};
 
 						// Survival type loot
-						if ( _lootType == 6 ) then {};
+						if ( _lootType == 6 ) then {
+
+							_itemHolder = "WeaponHolderSimulated" createVehicle [0,0,0];
+							_itemHolder setPos _x;
+							_itemHolder addWeaponCargoGlobal [ _survivalLootArray call BIS_fnc_selectRandom, 1];
+							
+						};
 
 						// Enable debug
 						if ( _enableDebug ) then {
@@ -118,3 +152,11 @@ _spawnLoot = [] spawn {
 	}; // while loop
 
 }; // end...
+
+
+//=================================================================================
+// _building setVariable ["ExileLootWeaponHolderNetIDs", _lootWeaponHolderNetIDs];
+// _building setVariable ["ExileLootSpawnedAt", time];
+// _building setVariable ["ExileHasLoot", true];
+// _lootWeaponHolderNetIDs pushBack (netId _lootHolder);
+//=================================================================================
