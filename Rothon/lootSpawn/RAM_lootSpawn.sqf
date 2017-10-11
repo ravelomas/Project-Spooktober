@@ -2,7 +2,7 @@ if !(isServer) exitWith {};
 
 _spawnLoot = [] spawn {
 
-	waitUntil { time > 0 };
+	waitUntil { time > 5 };
 
 	_activateLootSpawn = true;
 
@@ -66,7 +66,15 @@ _spawnLoot = [] spawn {
 
 					if ( _spawnChance > random 100 ) then {
 
-						_lootType = _lootArray call BIS_fnc_selectRandom;
+						_lootType = floor ( random 7);
+
+						// Enable debug
+						if ( _enableDebug ) then {
+							_markerID = format["%1", _x];
+							_debug = createMarker [_markerID, getPos _itemHolder];
+							_debug setMarkerType "mil_dot";
+							_debug setMarkerColor "ColorRed";
+						};
 
 						// Weapon type loot
 						if ( _lootType == 0 ) then {
@@ -128,15 +136,7 @@ _spawnLoot = [] spawn {
 							_itemHolder = "WeaponHolderSimulated" createVehicle [0,0,0];
 							_itemHolder setPos _x;
 							_itemHolder addItemCargoGlobal [ _survivalLootArray call BIS_fnc_selectRandom, 1];
-							
-						};
 
-						// Enable debug
-						if ( _enableDebug ) then {
-							_markerID = format["%1", _x];
-							_debug = createMarker [_markerID, getPos _itemHolder];
-							_debug setMarkerType "mil_dot";
-							_debug setMarkerColor "ColorRed";
 						};
 
 					}; // loot spawn chance
