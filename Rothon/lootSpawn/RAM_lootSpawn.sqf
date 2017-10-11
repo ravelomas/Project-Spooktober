@@ -1,98 +1,86 @@
-// THIS NEEDS TO BE MULTIPLAYER(IZED)..... PARAMS["_unit"] etc...
-// 1) Needed: array of current loot & positions so we can despawn loot but keep in memory
-// 2) Needed: build our loot array either manually or from config file
-// 3) Maybe add building exclusion list into the function ??
-//
-//
-//
-
 if !(isServer) exitWith {};
 
-ST_fnc_spawnSurvivalLoot = {
+_spawnLoot = [] spawn {
 
-	_spawnLoot = true;
+	waitUntil { time > 5 };
 
-	_spawnChance = 10;
+	_activateLootSpawn = true;
 
-	_spawnDistance = 150;
+	_spawnDistance = 80;
+
+	_spawnChance = 0.1;
 
 	_enableDebug = true;
 
-	_lootArray = [];
+	_lootArray = [
+		"arifle_AK12_F",
+		"arifle_AKM_F",
+		"arifle_CTAR_ghex_F",
+		"arifle_Katiba_F",
+		"arifle_Mk20_GL_plain_F",
+		"arifle_MX_GL_F",
+		"arifle_MX_F",
+		"arifle_MXC_Black_F",
+		"arifle_MXM_Black_F",
+		"arifle_MXM_khk_F",
+		"arifle_SPAR_01_snd_F",
+		"arifle_SPAR_02_khk_F",
+		"arifle_TRG21_GL_F",
+		"arifle_ARX_hex_F",
+		"launch_RPG32_F",
+		"launch_I_Titan_F",
+		"launch_B_Titan_F",
+		"launch_I_Titan_short_F",
+		"LMG_Mk200_F",
+		"MMG_01_hex_F",
+		"MMG_02_sand_F",
+		"hgun_P07_F",
+		"hgun_Pistol_01_F",
+		"hgun_Pistol_Signal_F",
+		"srifle_DMR_07_ghex_F",
+		"srifle_GM6_F",
+		"optic_ACO_grn_smg",
+		"optic_Holosight_khk_F",
+		"acc_pointer_IR",
+		"acc_flashlight_pistol",
+		"acc_flashlight"	
+	];
 
-	while { _spawnLoot } do {
+	while { _activateLootSpawn } do {
 
 		_buildings = player nearObjects [ "House", _spawnDistance ];
 
 		{
 
-			if ( player distance _x <= _spawnDistance ) then {
+			_buildingPositions = [_x] call BIS_fnc_buildingPositions;
 
-				for '_i' from 0 to 50 do {
+			{
 
-					_buildingPosition = _x buildingPos _i;
-
-					if ( str _buildingPosition == "[0,0,0]" ) exitWith {};
+				if ( player distance _x <= _spawnDistance ) then {
 
 					if ( _spawnChance > random 100 ) then {
 
-						_pos = ( _buildingPosition select 0 );
-						_pos0 = ( _pos select 0 );
-						_pos1 = ( _pos select 1 );
-						_pos2 = ( _pos select 2 );
-
-						_itemBox = createVehicle [ "WeaponHolderSimulated", [ _pos0, _pos1, _pos2 + 0.1 ], [], 0, "can_Collide" ];
-
-						_lootType = floor ( random 6 );
+						_itemHolder = "WeaponHolderSimulated" createVehicle [0,0,0];
+						_itemHolder setPos _x;
+						_itemHolder addWeaponCargoGlobal [ _lootArray call BIS_fnc_selectRandom, 1];
 
 						if ( _enableDebug ) then {
-
-							_debug = createMarker [ "lootMarker", getPos _itemBox ];
+							_markerID = format["%1", _x];
+							_debug = createMarker [_markerID, getPos _itemHolder];
 							_debug setMarkerType "mil_dot";
 							_debug setMarkerColor "ColorRed";
-
 						};
 
-						if ( _lootTYpe == 0 ) then {}; // Spawn weapon
+					}; // loot spawn chance
 
-						if ( _lootTYpe == 1 ) then {}; // Spawn ammo
+				}; // player distance
 
-						if ( _lootType == 2 ) then {}; // Spawn vest
+			} forEach _buildingPositions; // each building position
 
-						if ( _lootType == 3 ) then {}; // Spawn backpack
+		} forEach _buildings; // each building
 
-						if ( _lootType == 4 ) then {}; // Spawn item
+		sleep 0.1;
 
-						if ( _lootType == 5 ) then {}; // Spawn uniform
+	}; // while loop
 
-						if ( _lootType == 6 ) then {}; // Spawn survival item
-
-						if ( _lootType == 7 ) then {}; // Spawn headgear
-
-					};
-
-				};
-
-			};
-
-		} forEach _buildings;
-
-		sleep 0.5;
-
-	};
-
-};
-
-_startSpawningLoot = [] spawn {
-
-	_runLootFunction = true;
-
-	while { _runLootFunction } do {
-
-		_ST_spawnLoot = [] call ST_fnc_spawnSurvivalLoot;
-
-		sleep 2;
-
-	};
-
-};
+}; // end...
