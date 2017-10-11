@@ -1,3 +1,12 @@
+// 1) Needed: array of current loot & positions so we can despawn loot but keep in memory
+//
+//
+//
+//
+//
+
+if !(isServer) exitWith {};
+
 ST_fnc_spawnSurvivalLoot = {
 
 	_spawnLoot = true;
@@ -68,6 +77,20 @@ ST_fnc_spawnSurvivalLoot = {
 		} forEach _buildings;
 
 		sleep 0.5;
+
+	};
+
+};
+
+_startSpawningLoot = [] spawn {
+
+	_runLootFunction = true;
+
+	while { _runLootFunction } do {
+
+		_ST_spawnLoot = [] call ST_fnc_spawnSurvivalLoot;
+
+		sleep 2;
 
 	};
 
