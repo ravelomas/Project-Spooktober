@@ -1,6 +1,6 @@
 // 1) Needed: array of current loot & positions so we can despawn loot but keep in memory
-//
-//
+// 2) Needed: build our loot array either manually or from config file
+// 3) Maybe add building exclusion list into the function ??
 //
 //
 //
