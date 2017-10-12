@@ -1,0 +1,1 @@
+call compile preProcessFile "\iniDB\init.sqf";
