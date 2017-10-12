@@ -36,6 +36,8 @@ RAZ_fnc_lootArray = [
 
 RAZ_fnc_spawnLoot = {
 
+	params ["_unit"];
+
 	_spawnDistance = 80; // Set the distance to building for loot spawn...
 
 	_spawnChance = 5; // Set the % chance of loot spawning ( 0.5 - 5 is recommended)...
@@ -43,6 +45,7 @@ RAZ_fnc_spawnLoot = {
 	_enableDebug = true; // Enable debug loot markers...
 
 	_buildings = player nearObjects [ "House", _spawnDistance ]; // Get buildings close to player...
+	//_buildings = _unit nearObjects [ "House", _spawnDistance ];
 
 	{
 
@@ -53,6 +56,7 @@ RAZ_fnc_spawnLoot = {
 			{
 
 				if ( player distance _x <= _spawnDistance && _spawnChance > random 100 ) then {
+				//if ( _unit distance _x <= _spawnDistance && _spawnChance > random 100 ) then {
 
 					_lootSelection = floor ( random 7 );
 
