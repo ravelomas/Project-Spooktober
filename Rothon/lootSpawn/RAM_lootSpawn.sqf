@@ -36,27 +36,27 @@ RAZ_fnc_lootArray = [
 
 RAZ_fnc_spawnLoot = {
 
-	params ["_unit"];
-
 	_spawnDistance = 80; // Set the distance to building for loot spawn...
 
 	_spawnChance = 5; // Set the % chance of loot spawning ( 0.5 - 5 is recommended)...
 
+	_deletionTime = 5; // mins before loot deleted ready for respawn (will only delete when player is ?? far away and timer is over ??)...
+
 	_enableDebug = true; // Enable debug loot markers...
 
 	_buildings = player nearObjects [ "House", _spawnDistance ]; // Get buildings close to player...
-	//_buildings = _unit nearObjects [ "House", _spawnDistance ];
 
 	{
 
-		if ( ( _x getVariable ["hasLoot", 0] ) == 0 ) then {
+		//_lootTimer = time + _deletionTime * 60;
+
+		if (_x getVariable ["buildingEmpty", true]) then {
 
 			_buildingPositions = [ _x ] call BIS_fnc_buildingPositions; // Get positions in buildings if variable is false...
 
 			{
 
-				if ( player distance _x <= _spawnDistance && _spawnChance > random 100 ) then {
-				//if ( _unit distance _x <= _spawnDistance && _spawnChance > random 100 ) then {
+				if ( player distance _x <= _spawnDistance && _spawnChance >= random 100 ) then {
 
 					_lootSelection = floor ( random 7 );
 
@@ -197,7 +197,7 @@ RAZ_fnc_spawnLoot = {
 
 			} forEach _buildingPositions; // End for each building position...
 
-			_x setVariable ["hasLoot", 1]; // Set the building variable to true...
+			_x setVariable ["buildingEmpty", false]; // Set the building variable to true...
 
 		}; // Enf building variavble check...
 
