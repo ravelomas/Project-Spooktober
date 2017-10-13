@@ -40,7 +40,7 @@ _RAZ_fnc_spawnLoot = [] spawn {
 
 	_spawnChance = 25; // Set the % chance of loot spawning ( 0.5 - 5 is recommended)...
 
-	_deletionTime = 5 * 60; // mins before loot deleted ready for respawn (will only delete when player is ?? far away and timer is over ??)...
+	_deletionTime = 10 * 60; // mins before loot deleted ready for respawn (will only delete when player is ?? far away and timer is over ??)...
 
 	_enableDebug = true; // Enable debug loot markers...
 
@@ -69,7 +69,7 @@ _RAZ_fnc_spawnLoot = [] spawn {
 							_itemHolder setPos _x;
 							_itemHolder addWeaponCargoGlobal [ (selectRandom ( _rifleConfigs ) ), 1];
 							_timer = time + _deletionTime;
-							_spawnedLoot pushBack _itemHolder;
+							if !(isNull _itemHolder) then { _spawnedLoot pushBack [_itemHolder call BIS_fnc_netId, _timer] };
 							if ( _enableDebug ) then {
 								_markerID = format [ "%1", _x ];
 								_markerText = format [ "%1", _lootSelection ];
@@ -91,7 +91,7 @@ _RAZ_fnc_spawnLoot = [] spawn {
 							_mag = ( selectRandom ( _mags ) );
 							_itemHolder addMagazineCargoGlobal [_mag, (random 4)];
 							_timer = time + _deletionTime;
-							_spawnedLoot pushBack _itemHolder;
+							if !(isNull _itemHolder) then { _spawnedLoot pushBack [_itemHolder call BIS_fnc_netId, _timer] };
 							if ( _enableDebug ) then {
 								_markerID = format [ "%1", _x ];
 								_markerText = format [ "%1", _lootSelection ];
@@ -109,7 +109,7 @@ _RAZ_fnc_spawnLoot = [] spawn {
 							_itemHolder setPos _x;
 							_itemHolder addItemCargoGlobal [ (selectRandom ( RAZ_fnc_lootArray select 0 ) ), 1];
 							_timer = time + _deletionTime;
-							_spawnedLoot pushBack _itemHolder;
+							if !(isNull _itemHolder) then { _spawnedLoot pushBack [_itemHolder call BIS_fnc_netId, _timer] };
 							if ( _enableDebug ) then {
 								_markerID = format [ "%1", _x ];
 								_markerText = format [ "%1", _lootSelection ];
@@ -127,7 +127,7 @@ _RAZ_fnc_spawnLoot = [] spawn {
 							_itemHolder setPos _x;
 							_itemHolder addBackpackCargoGlobal [ (selectRandom ( RAZ_fnc_lootArray select 1 ) ), 1];
 							_timer = time + _deletionTime;
-							_spawnedLoot pushBack _itemHolder;
+							if !(isNull _itemHolder) then { _spawnedLoot pushBack [_itemHolder call BIS_fnc_netId, _timer] };
 							if ( _enableDebug ) then {
 								_markerID = format [ "%1", _x ];
 								_markerText = format [ "%1", _lootSelection ];
@@ -145,7 +145,7 @@ _RAZ_fnc_spawnLoot = [] spawn {
 							_itemHolder setPos _x;
 							_itemHolder addItemCargoGlobal [ (selectRandom ( RAZ_fnc_lootArray select 2 ) ), 1];
 							_timer = time + _deletionTime;
-							_spawnedLoot pushBack _itemHolder;
+							if !(isNull _itemHolder) then { _spawnedLoot pushBack [_itemHolder call BIS_fnc_netId, _timer] };
 							if ( _enableDebug ) then {
 								_markerID = format [ "%1", _x ];
 								_markerText = format [ "%1", _lootSelection ];
@@ -163,7 +163,7 @@ _RAZ_fnc_spawnLoot = [] spawn {
 							_itemHolder setPos _x;
 							_itemHolder addItemCargoGlobal [ (selectRandom ( RAZ_fnc_lootArray select 3 ) ), 1];
 							_timer = time + _deletionTime;
-							_spawnedLoot pushBack _itemHolder;
+							if !(isNull _itemHolder) then { _spawnedLoot pushBack [_itemHolder call BIS_fnc_netId, _timer] };
 							if ( _enableDebug ) then {
 								_markerID = format [ "%1", _x ];
 								_markerText = format [ "%1", _lootSelection ];
@@ -181,7 +181,7 @@ _RAZ_fnc_spawnLoot = [] spawn {
 							_itemHolder setPos _x;
 							_itemHolder addItemCargoGlobal [ (selectRandom ( RAZ_fnc_lootArray select 4 ) ), 1];
 							_timer = time + _deletionTime;
-							_spawnedLoot pushBack _itemHolder;
+							if !(isNull _itemHolder) then { _spawnedLoot pushBack [_itemHolder call BIS_fnc_netId, _timer] };
 							if ( _enableDebug ) then {
 								_markerID = format [ "%1", _x ];
 								_markerText = format [ "%1", _lootSelection ];
@@ -199,7 +199,7 @@ _RAZ_fnc_spawnLoot = [] spawn {
 							_itemHolder setPos _x;
 							_itemHolder addItemCargoGlobal [ (selectRandom ( RAZ_fnc_lootArray select 5 ) ), 1];
 							_timer = time + _deletionTime;
-							_spawnedLoot pushBack _itemHolder;
+							if !(isNull _itemHolder) then { _spawnedLoot pushBack [_itemHolder call BIS_fnc_netId, _timer] };
 							if ( _enableDebug ) then {
 								_markerID = format [ "%1", _x ];
 								_markerText = format [ "%1", _lootSelection ];
@@ -213,7 +213,12 @@ _RAZ_fnc_spawnLoot = [] spawn {
 
 					}; // End spawn distance and chance check...
 
-					if ( player distance _x > _spawnDistance ) then { { deleteVehicle _x } forEach _spawnedLoot; }; // Delete loot if player moves away...
+					{
+						_obj = _x select 0 call BIS_fnc_objectFromNetId;
+
+						if ( player distance _obj > _spawnDistance && time > _x select 1 ) then { deleteVehicle _obj; };
+
+					} forEach _spawnedLoot;
 
 				} forEach _buildingPositions; // End for each building position...
 
@@ -221,11 +226,11 @@ _RAZ_fnc_spawnLoot = [] spawn {
 
 			}; // End building variable check...
 
-			if ( player distance _x > _spawnDistance ) then { _x setVariable ["buildingEmpty", true]; }; // Set building to empty if player moves away...
-
 		} forEach _buildings; // End for each building...
 
-		sleep 1; // Time between spawn checks...
+		hint str _spawnedLoot;
+
+		sleep 2; // Time between spawn checks...
 
 	}; // End while loop...
 
