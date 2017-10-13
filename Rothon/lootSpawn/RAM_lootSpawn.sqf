@@ -53,6 +53,8 @@ _RAZ_fnc_spawnLoot = [] spawn {
 
 	_deletionTime = 1 * 60; // mins before loot deleted ready for respawn (will only delete when player is ?? far away and timer is over ??) (30 mins recommended)...
 
+	_deletionDistance = 500;
+
 	_buildingCoolOff = 1 * 60; // Time between fresh loot spawning / replacing into a building (1 hour recommended)
 
 	_enableDebug = true; // Enable debug loot markers...
@@ -236,7 +238,7 @@ _RAZ_fnc_spawnLoot = [] spawn {
 
 			_markerName = format [ "%1", _getMarkerName ];
 
-			if ( player distance _obj > _spawnDistance && time > _x select 1 ) then { deleteVehicle _obj; deleteMarker _markerName; _spawnedLoot deleteAt (_spawnedLoot find _x) };
+			if ( player distance _obj > _deletionDistance && time > _x select 1 ) then { deleteVehicle _obj; deleteMarker _markerName; _spawnedLoot deleteAt (_spawnedLoot find _x) };
 
 		} forEach _spawnedLoot; // Foreach loot item in array...
 
@@ -244,7 +246,7 @@ _RAZ_fnc_spawnLoot = [] spawn {
 
 			_building = _x select 0 call BIS_fnc_objectFromNetId;
 
-			if ( player distance _building > _spawnDistance && time > _x select 1 ) then { _building setVariable [ "buildingEmpty", true ] };
+			if ( player distance _building > _deletionDistance && time > _x select 1 ) then { _building setVariable [ "buildingEmpty", true ] };
 
 		} forEach _buildingsArray; // Foreach building in array...
 
