@@ -3,6 +3,11 @@ if !(isServer) exitWith {};
 RAZ_fnc_lootArray = [
 
 	[
+		// Weapons
+		"arifle_MXC_F"
+	],
+
+	[
 		// Uniforms
 		"U_C_IDAP_Man_cargo_F"
 	],
@@ -40,11 +45,15 @@ _RAZ_fnc_spawnLoot = [] spawn {
 
 	_spawnChance = 25; // Set the % chance of loot spawning ( 0.5 - 5 is recommended)...
 
-	_deletionTime = 10 * 60; // mins before loot deleted ready for respawn (will only delete when player is ?? far away and timer is over ??)...
+	_deletionTime = 1 * 60; // mins before loot deleted ready for respawn (will only delete when player is ?? far away and timer is over ??) (30 mins recommended)...
+
+	_buildingCoolOff = 1 * 60; // Time between fresh loot spawning / replacing into a building (1 hour recommended)
 
 	_enableDebug = true; // Enable debug loot markers...
 
 	_spawnedLoot = []; // Array- netId of spawned item holders
+
+	_buildingsArray = []; // Array of all buildings checked...
 
 	while { true } do {
 
@@ -53,6 +62,9 @@ _RAZ_fnc_spawnLoot = [] spawn {
 		{
 
 			if (_x getVariable ["buildingEmpty", true]) then {
+
+				_coolOfPeriod = time + _buildingCoolOff;
+				_buildingsArray pushBack [_x call BIS_fnc_netId, _coolOfPeriod];
 
 				_buildingPositions = [ _x ] call BIS_fnc_buildingPositions; // Get positions in buildings if variable is false...
 
@@ -64,12 +76,10 @@ _RAZ_fnc_spawnLoot = [] spawn {
 
 						if ( _lootSelection == 0 ) then {
 
-							_rifleConfigs = "getNumber( _x >> 'scope' ) isEqualTo 2 && { getNumber( _x >> 'type' ) isEqualTo 1 && getText( _x >> 'cursor' ) == 'arifle' }"configClasses( configFile >> "CfgWeapons" ) apply { configName _x };
 							_itemHolder = "WeaponHolderSimulated" createVehicle [0,0,0];
 							_itemHolder setPos _x;
-							_itemHolder addWeaponCargoGlobal [ (selectRandom ( _rifleConfigs ) ), 1];
+							_itemHolder addWeaponCargoGlobal [ (selectRandom ( RAZ_fnc_lootArray select 0 ) ), 1];
 							_timer = time + _deletionTime;
-							if !(isNull _itemHolder) then { _spawnedLoot pushBack [_itemHolder call BIS_fnc_netId, _timer] };
 							if ( _enableDebug ) then {
 								_markerID = format [ "%1", _x ];
 								_markerText = format [ "%1", _lootSelection ];
@@ -77,21 +87,20 @@ _RAZ_fnc_spawnLoot = [] spawn {
 								_debug setMarkerType "mil_dot";
 								_debug setMarkerColor "ColorRed";
 								_debug setMarkerText _markerText;
-							}
+							};
+							if !(isNull _itemHolder) then { _spawnedLoot pushBack [_itemHolder call BIS_fnc_netId, _timer, _x] };
 
 						}; // Spawn weapon loot
 
 						if ( _lootSelection == 1 ) then {
 
-							_rifleConfigs = "getNumber( _x >> 'scope' ) isEqualTo 2 && { getNumber( _x >> 'type' ) isEqualTo 1 && getText( _x >> 'cursor' ) == 'arifle' }"configClasses( configFile >> "CfgWeapons" ) apply { configName _x };
 							_itemHolder = "WeaponHolderSimulated" createVehicle [0,0,0];
 							_itemHolder setPos _x;
-							_item = ( selectRandom ( _rifleConfigs ) );
+							_item = ( selectRandom ( RAZ_fnc_lootArray select 0 ) );
 							_mags = getArray ( configFile >> "CfgWeapons" >> _item >> "magazines" );
 							_mag = ( selectRandom ( _mags ) );
 							_itemHolder addMagazineCargoGlobal [_mag, (random 4)];
 							_timer = time + _deletionTime;
-							if !(isNull _itemHolder) then { _spawnedLoot pushBack [_itemHolder call BIS_fnc_netId, _timer] };
 							if ( _enableDebug ) then {
 								_markerID = format [ "%1", _x ];
 								_markerText = format [ "%1", _lootSelection ];
@@ -99,7 +108,8 @@ _RAZ_fnc_spawnLoot = [] spawn {
 								_debug setMarkerType "mil_dot";
 								_debug setMarkerColor "ColorRed";
 								_debug setMarkerText _markerText;
-							}
+							};
+							if !(isNull _itemHolder) then { _spawnedLoot pushBack [_itemHolder call BIS_fnc_netId, _timer, _x] };
 
 						}; // Spawn ammo loot
 
@@ -107,9 +117,8 @@ _RAZ_fnc_spawnLoot = [] spawn {
 
 							_itemHolder = "WeaponHolderSimulated" createVehicle [0,0,0];
 							_itemHolder setPos _x;
-							_itemHolder addItemCargoGlobal [ (selectRandom ( RAZ_fnc_lootArray select 0 ) ), 1];
+							_itemHolder addItemCargoGlobal [ (selectRandom ( RAZ_fnc_lootArray select 1 ) ), 1];
 							_timer = time + _deletionTime;
-							if !(isNull _itemHolder) then { _spawnedLoot pushBack [_itemHolder call BIS_fnc_netId, _timer] };
 							if ( _enableDebug ) then {
 								_markerID = format [ "%1", _x ];
 								_markerText = format [ "%1", _lootSelection ];
@@ -117,7 +126,8 @@ _RAZ_fnc_spawnLoot = [] spawn {
 								_debug setMarkerType "mil_dot";
 								_debug setMarkerColor "ColorRed";
 								_debug setMarkerText _markerText;
-							}
+							};
+							if !(isNull _itemHolder) then { _spawnedLoot pushBack [_itemHolder call BIS_fnc_netId, _timer, _x] };
 
 						}; // Spawn uniform loot
 
@@ -125,9 +135,8 @@ _RAZ_fnc_spawnLoot = [] spawn {
 
 							_itemHolder = "WeaponHolderSimulated" createVehicle [0,0,0];
 							_itemHolder setPos _x;
-							_itemHolder addBackpackCargoGlobal [ (selectRandom ( RAZ_fnc_lootArray select 1 ) ), 1];
+							_itemHolder addBackpackCargoGlobal [ (selectRandom ( RAZ_fnc_lootArray select 2 ) ), 1];
 							_timer = time + _deletionTime;
-							if !(isNull _itemHolder) then { _spawnedLoot pushBack [_itemHolder call BIS_fnc_netId, _timer] };
 							if ( _enableDebug ) then {
 								_markerID = format [ "%1", _x ];
 								_markerText = format [ "%1", _lootSelection ];
@@ -135,7 +144,8 @@ _RAZ_fnc_spawnLoot = [] spawn {
 								_debug setMarkerType "mil_dot";
 								_debug setMarkerColor "ColorRed";
 								_debug setMarkerText _markerText;
-							}
+							};
+							if !(isNull _itemHolder) then { _spawnedLoot pushBack [_itemHolder call BIS_fnc_netId, _timer, _x] };
 
 						}; // Spawn backpack loot
 
@@ -143,9 +153,8 @@ _RAZ_fnc_spawnLoot = [] spawn {
 
 							_itemHolder = "WeaponHolderSimulated" createVehicle [0,0,0];
 							_itemHolder setPos _x;
-							_itemHolder addItemCargoGlobal [ (selectRandom ( RAZ_fnc_lootArray select 2 ) ), 1];
+							_itemHolder addItemCargoGlobal [ (selectRandom ( RAZ_fnc_lootArray select 3 ) ), 1];
 							_timer = time + _deletionTime;
-							if !(isNull _itemHolder) then { _spawnedLoot pushBack [_itemHolder call BIS_fnc_netId, _timer] };
 							if ( _enableDebug ) then {
 								_markerID = format [ "%1", _x ];
 								_markerText = format [ "%1", _lootSelection ];
@@ -153,7 +162,8 @@ _RAZ_fnc_spawnLoot = [] spawn {
 								_debug setMarkerType "mil_dot";
 								_debug setMarkerColor "ColorRed";
 								_debug setMarkerText _markerText;
-							}
+							};
+							if !(isNull _itemHolder) then { _spawnedLoot pushBack [_itemHolder call BIS_fnc_netId, _timer, _x] };
 
 						}; // Spawn vest loot
 
@@ -161,9 +171,8 @@ _RAZ_fnc_spawnLoot = [] spawn {
 
 							_itemHolder = "WeaponHolderSimulated" createVehicle [0,0,0];
 							_itemHolder setPos _x;
-							_itemHolder addItemCargoGlobal [ (selectRandom ( RAZ_fnc_lootArray select 3 ) ), 1];
+							_itemHolder addItemCargoGlobal [ (selectRandom ( RAZ_fnc_lootArray select 4 ) ), 1];
 							_timer = time + _deletionTime;
-							if !(isNull _itemHolder) then { _spawnedLoot pushBack [_itemHolder call BIS_fnc_netId, _timer] };
 							if ( _enableDebug ) then {
 								_markerID = format [ "%1", _x ];
 								_markerText = format [ "%1", _lootSelection ];
@@ -171,7 +180,8 @@ _RAZ_fnc_spawnLoot = [] spawn {
 								_debug setMarkerType "mil_dot";
 								_debug setMarkerColor "ColorRed";
 								_debug setMarkerText _markerText;
-							}
+							};
+							if !(isNull _itemHolder) then { _spawnedLoot pushBack [_itemHolder call BIS_fnc_netId, _timer, _x] };
 
 						}; // Spawn headgear loot
 
@@ -179,9 +189,8 @@ _RAZ_fnc_spawnLoot = [] spawn {
 
 							_itemHolder = "WeaponHolderSimulated" createVehicle [0,0,0];
 							_itemHolder setPos _x;
-							_itemHolder addItemCargoGlobal [ (selectRandom ( RAZ_fnc_lootArray select 4 ) ), 1];
+							_itemHolder addItemCargoGlobal [ (selectRandom ( RAZ_fnc_lootArray select 5 ) ), 1];
 							_timer = time + _deletionTime;
-							if !(isNull _itemHolder) then { _spawnedLoot pushBack [_itemHolder call BIS_fnc_netId, _timer] };
 							if ( _enableDebug ) then {
 								_markerID = format [ "%1", _x ];
 								_markerText = format [ "%1", _lootSelection ];
@@ -189,7 +198,8 @@ _RAZ_fnc_spawnLoot = [] spawn {
 								_debug setMarkerType "mil_dot";
 								_debug setMarkerColor "ColorRed";
 								_debug setMarkerText _markerText;
-							}
+							};
+							if !(isNull _itemHolder) then { _spawnedLoot pushBack [_itemHolder call BIS_fnc_netId, _timer, _x] };
 
 						}; // Spawn item loot
 
@@ -197,9 +207,8 @@ _RAZ_fnc_spawnLoot = [] spawn {
 
 							_itemHolder = "WeaponHolderSimulated" createVehicle [0,0,0];
 							_itemHolder setPos _x;
-							_itemHolder addItemCargoGlobal [ (selectRandom ( RAZ_fnc_lootArray select 5 ) ), 1];
+							_itemHolder addItemCargoGlobal [ (selectRandom ( RAZ_fnc_lootArray select 6 ) ), 1];
 							_timer = time + _deletionTime;
-							if !(isNull _itemHolder) then { _spawnedLoot pushBack [_itemHolder call BIS_fnc_netId, _timer] };
 							if ( _enableDebug ) then {
 								_markerID = format [ "%1", _x ];
 								_markerText = format [ "%1", _lootSelection ];
@@ -207,18 +216,12 @@ _RAZ_fnc_spawnLoot = [] spawn {
 								_debug setMarkerType "mil_dot";
 								_debug setMarkerColor "ColorRed";
 								_debug setMarkerText _markerText;
-							}
+							};
+							if !(isNull _itemHolder) then { _spawnedLoot pushBack [_itemHolder call BIS_fnc_netId, _timer, _x] };
 
 						}; // Spawn survival loot...
 
 					}; // End spawn distance and chance check...
-
-					{
-						_obj = _x select 0 call BIS_fnc_objectFromNetId;
-
-						if ( player distance _obj > _spawnDistance && time > _x select 1 ) then { deleteVehicle _obj; };
-
-					} forEach _spawnedLoot;
 
 				} forEach _buildingPositions; // End for each building position...
 
@@ -227,6 +230,25 @@ _RAZ_fnc_spawnLoot = [] spawn {
 			}; // End building variable check...
 
 		} forEach _buildings; // End for each building...
+
+		{
+			_obj = _x select 0 call BIS_fnc_objectFromNetId;
+
+			_getMarkerName = _x select 2;
+
+			_markerName = format [ "%1", _getMarkerName ];
+
+			if ( player distance _obj > _spawnDistance && time > _x select 1 ) then { deleteVehicle _obj; deleteMarker _markerName; _spawnedLoot deleteAt (_spawnedLoot find _x) };
+
+		} forEach _spawnedLoot; // Foreach loot item in array...
+
+		{
+
+			_building = _x select 0 call BIS_fnc_objectFromNetId;
+
+			if ( player distance _building > _spawnDistance && time > _x select 1 ) then { _building setVariable [ "buildingEmpty", true ] };
+
+		} forEach _buildingsArray; // Foreach building in array...
 
 		hint str _spawnedLoot;
 
