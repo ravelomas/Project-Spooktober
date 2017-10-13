@@ -34,191 +34,199 @@ RAZ_fnc_lootArray = [
 
 ];
 
-RAZ_fnc_spawnLoot = {
+_RAZ_fnc_spawnLoot = [] spawn {
 
-	_spawnDistance = 80; // Set the distance to building for loot spawn...
+	_spawnDistance = 30; // Set the distance to building for loot spawn...
 
-	_spawnChance = 5; // Set the % chance of loot spawning ( 0.5 - 5 is recommended)...
+	_spawnChance = 25; // Set the % chance of loot spawning ( 0.5 - 5 is recommended)...
 
-	_deletionTime = 5; // mins before loot deleted ready for respawn (will only delete when player is ?? far away and timer is over ??)...
+	_deletionTime = 5 * 60; // mins before loot deleted ready for respawn (will only delete when player is ?? far away and timer is over ??)...
 
 	_enableDebug = true; // Enable debug loot markers...
 
-	_buildings = player nearObjects [ "House", _spawnDistance ]; // Get buildings close to player...
+	_spawnedLoot = []; // Array- netId of spawned item holders
 
-	{
+	while { true } do {
 
-		//_lootTimer = time + _deletionTime * 60;
+		_buildings = player nearObjects [ "House", _spawnDistance ]; // Get buildings close to player...
 
-		if (_x getVariable ["buildingEmpty", true]) then {
+		{
 
-			_buildingPositions = [ _x ] call BIS_fnc_buildingPositions; // Get positions in buildings if variable is false...
+			if (_x getVariable ["buildingEmpty", true]) then {
 
-			{
+				_buildingPositions = [ _x ] call BIS_fnc_buildingPositions; // Get positions in buildings if variable is false...
 
-				if ( player distance _x <= _spawnDistance && _spawnChance >= random 100 ) then {
+				{
 
-					_lootSelection = floor ( random 7 );
+					if ( player distance _x <= _spawnDistance && _spawnChance >= random 100 ) then {
 
-					if ( _lootSelection == 0 ) then {
+						_lootSelection = floor ( random 7 );
 
-						_rifleConfigs = "getNumber( _x >> 'scope' ) isEqualTo 2 && { getNumber( _x >> 'type' ) isEqualTo 1 && getText( _x >> 'cursor' ) == 'arifle' }"configClasses( configFile >> "CfgWeapons" ) apply { configName _x };
-						_itemHolder = "WeaponHolderSimulated" createVehicle [0,0,0];
-						_itemHolder setPos _x;
-						_itemHolder addWeaponCargoGlobal [ (selectRandom ( _rifleConfigs ) ), 1];
-						if ( _enableDebug ) then {
-							_markerID = format [ "%1", _x ];
-							_markerText = format [ "%1", _lootSelection ];
-							_debug = createMarker [_markerID, _x];
-							_debug setMarkerType "mil_dot";
-							_debug setMarkerColor "ColorRed";
-							_debug setMarkerText _markerText;
-						}
+						if ( _lootSelection == 0 ) then {
 
-					}; // Spawn weapon loot
+							_rifleConfigs = "getNumber( _x >> 'scope' ) isEqualTo 2 && { getNumber( _x >> 'type' ) isEqualTo 1 && getText( _x >> 'cursor' ) == 'arifle' }"configClasses( configFile >> "CfgWeapons" ) apply { configName _x };
+							_itemHolder = "WeaponHolderSimulated" createVehicle [0,0,0];
+							_itemHolder setPos _x;
+							_itemHolder addWeaponCargoGlobal [ (selectRandom ( _rifleConfigs ) ), 1];
+							_timer = time + _deletionTime;
+							_spawnedLoot pushBack _itemHolder;
+							if ( _enableDebug ) then {
+								_markerID = format [ "%1", _x ];
+								_markerText = format [ "%1", _lootSelection ];
+								_debug = createMarker [_markerID, _x];
+								_debug setMarkerType "mil_dot";
+								_debug setMarkerColor "ColorRed";
+								_debug setMarkerText _markerText;
+							}
 
-					if ( _lootSelection == 1 ) then {
+						}; // Spawn weapon loot
 
-						_rifleConfigs = "getNumber( _x >> 'scope' ) isEqualTo 2 && { getNumber( _x >> 'type' ) isEqualTo 1 && getText( _x >> 'cursor' ) == 'arifle' }"configClasses( configFile >> "CfgWeapons" ) apply { configName _x };
-						_itemHolder = "WeaponHolderSimulated" createVehicle [0,0,0];
-						_itemHolder setPos _x;
-						_item = ( selectRandom ( _rifleConfigs ) );
-						_mags = getArray ( configFile >> "CfgWeapons" >> _item >> "magazines" );
-						_mag = ( selectRandom ( _mags ) );
-						_itemHolder addMagazineCargoGlobal [_mag, (random 4)];
-						if ( _enableDebug ) then {
-							_markerID = format [ "%1", _x ];
-							_markerText = format [ "%1", _lootSelection ];
-							_debug = createMarker [_markerID, _x];
-							_debug setMarkerType "mil_dot";
-							_debug setMarkerColor "ColorRed";
-							_debug setMarkerText _markerText;
-						}
+						if ( _lootSelection == 1 ) then {
 
-					}; // Spawn ammo loot
+							_rifleConfigs = "getNumber( _x >> 'scope' ) isEqualTo 2 && { getNumber( _x >> 'type' ) isEqualTo 1 && getText( _x >> 'cursor' ) == 'arifle' }"configClasses( configFile >> "CfgWeapons" ) apply { configName _x };
+							_itemHolder = "WeaponHolderSimulated" createVehicle [0,0,0];
+							_itemHolder setPos _x;
+							_item = ( selectRandom ( _rifleConfigs ) );
+							_mags = getArray ( configFile >> "CfgWeapons" >> _item >> "magazines" );
+							_mag = ( selectRandom ( _mags ) );
+							_itemHolder addMagazineCargoGlobal [_mag, (random 4)];
+							_timer = time + _deletionTime;
+							_spawnedLoot pushBack _itemHolder;
+							if ( _enableDebug ) then {
+								_markerID = format [ "%1", _x ];
+								_markerText = format [ "%1", _lootSelection ];
+								_debug = createMarker [_markerID, _x];
+								_debug setMarkerType "mil_dot";
+								_debug setMarkerColor "ColorRed";
+								_debug setMarkerText _markerText;
+							}
 
-					if ( _lootSelection == 2 ) then {
+						}; // Spawn ammo loot
 
-						_itemHolder = "WeaponHolderSimulated" createVehicle [0,0,0];
-						_itemHolder setPos _x;
-						_itemHolder addItemCargoGlobal [ (selectRandom ( RAZ_fnc_lootArray select 0 ) ), 1];
-						if ( _enableDebug ) then {
-							_markerID = format [ "%1", _x ];
-							_markerText = format [ "%1", _lootSelection ];
-							_debug = createMarker [_markerID, _x];
-							_debug setMarkerType "mil_dot";
-							_debug setMarkerColor "ColorRed";
-							_debug setMarkerText _markerText;
-						}
+						if ( _lootSelection == 2 ) then {
 
-					}; // Spawn uniform loot
+							_itemHolder = "WeaponHolderSimulated" createVehicle [0,0,0];
+							_itemHolder setPos _x;
+							_itemHolder addItemCargoGlobal [ (selectRandom ( RAZ_fnc_lootArray select 0 ) ), 1];
+							_timer = time + _deletionTime;
+							_spawnedLoot pushBack _itemHolder;
+							if ( _enableDebug ) then {
+								_markerID = format [ "%1", _x ];
+								_markerText = format [ "%1", _lootSelection ];
+								_debug = createMarker [_markerID, _x];
+								_debug setMarkerType "mil_dot";
+								_debug setMarkerColor "ColorRed";
+								_debug setMarkerText _markerText;
+							}
 
-					if ( _lootSelection == 3 ) then {
+						}; // Spawn uniform loot
 
-						_itemHolder = "WeaponHolderSimulated" createVehicle [0,0,0];
-						_itemHolder setPos _x;
-						_itemHolder addBackpackCargoGlobal [ (selectRandom ( RAZ_fnc_lootArray select 1 ) ), 1];
-						if ( _enableDebug ) then {
-							_markerID = format [ "%1", _x ];
-							_markerText = format [ "%1", _lootSelection ];
-							_debug = createMarker [_markerID, _x];
-							_debug setMarkerType "mil_dot";
-							_debug setMarkerColor "ColorRed";
-							_debug setMarkerText _markerText;
-						}
+						if ( _lootSelection == 3 ) then {
 
-					}; // Spawn backpack loot
+							_itemHolder = "WeaponHolderSimulated" createVehicle [0,0,0];
+							_itemHolder setPos _x;
+							_itemHolder addBackpackCargoGlobal [ (selectRandom ( RAZ_fnc_lootArray select 1 ) ), 1];
+							_timer = time + _deletionTime;
+							_spawnedLoot pushBack _itemHolder;
+							if ( _enableDebug ) then {
+								_markerID = format [ "%1", _x ];
+								_markerText = format [ "%1", _lootSelection ];
+								_debug = createMarker [_markerID, _x];
+								_debug setMarkerType "mil_dot";
+								_debug setMarkerColor "ColorRed";
+								_debug setMarkerText _markerText;
+							}
 
-					if ( _lootSelection == 4 ) then {
+						}; // Spawn backpack loot
 
-						_itemHolder = "WeaponHolderSimulated" createVehicle [0,0,0];
-						_itemHolder setPos _x;
-						_itemHolder addItemCargoGlobal [ (selectRandom ( RAZ_fnc_lootArray select 2 ) ), 1];
-						if ( _enableDebug ) then {
-							_markerID = format [ "%1", _x ];
-							_markerText = format [ "%1", _lootSelection ];
-							_debug = createMarker [_markerID, _x];
-							_debug setMarkerType "mil_dot";
-							_debug setMarkerColor "ColorRed";
-							_debug setMarkerText _markerText;
-						}
+						if ( _lootSelection == 4 ) then {
 
-					}; // Spawn vest loot
+							_itemHolder = "WeaponHolderSimulated" createVehicle [0,0,0];
+							_itemHolder setPos _x;
+							_itemHolder addItemCargoGlobal [ (selectRandom ( RAZ_fnc_lootArray select 2 ) ), 1];
+							_timer = time + _deletionTime;
+							_spawnedLoot pushBack _itemHolder;
+							if ( _enableDebug ) then {
+								_markerID = format [ "%1", _x ];
+								_markerText = format [ "%1", _lootSelection ];
+								_debug = createMarker [_markerID, _x];
+								_debug setMarkerType "mil_dot";
+								_debug setMarkerColor "ColorRed";
+								_debug setMarkerText _markerText;
+							}
 
-					if ( _lootSelection == 5 ) then {
+						}; // Spawn vest loot
 
-						_itemHolder = "WeaponHolderSimulated" createVehicle [0,0,0];
-						_itemHolder setPos _x;
-						_itemHolder addItemCargoGlobal [ (selectRandom ( RAZ_fnc_lootArray select 3 ) ), 1];
-						if ( _enableDebug ) then {
-							_markerID = format [ "%1", _x ];
-							_markerText = format [ "%1", _lootSelection ];
-							_debug = createMarker [_markerID, _x];
-							_debug setMarkerType "mil_dot";
-							_debug setMarkerColor "ColorRed";
-							_debug setMarkerText _markerText;
-						}
+						if ( _lootSelection == 5 ) then {
 
-					}; // Spawn headgear loot
+							_itemHolder = "WeaponHolderSimulated" createVehicle [0,0,0];
+							_itemHolder setPos _x;
+							_itemHolder addItemCargoGlobal [ (selectRandom ( RAZ_fnc_lootArray select 3 ) ), 1];
+							_timer = time + _deletionTime;
+							_spawnedLoot pushBack _itemHolder;
+							if ( _enableDebug ) then {
+								_markerID = format [ "%1", _x ];
+								_markerText = format [ "%1", _lootSelection ];
+								_debug = createMarker [_markerID, _x];
+								_debug setMarkerType "mil_dot";
+								_debug setMarkerColor "ColorRed";
+								_debug setMarkerText _markerText;
+							}
 
-					if ( _lootSelection == 6 ) then {
+						}; // Spawn headgear loot
 
-						_itemHolder = "WeaponHolderSimulated" createVehicle [0,0,0];
-						_itemHolder setPos _x;
-						_itemHolder addItemCargoGlobal [ (selectRandom ( RAZ_fnc_lootArray select 4 ) ), 1];
-						if ( _enableDebug ) then {
-							_markerID = format [ "%1", _x ];
-							_markerText = format [ "%1", _lootSelection ];
-							_debug = createMarker [_markerID, _x];
-							_debug setMarkerType "mil_dot";
-							_debug setMarkerColor "ColorRed";
-							_debug setMarkerText _markerText;
-						}
+						if ( _lootSelection == 6 ) then {
 
-					}; // Spawn item loot
+							_itemHolder = "WeaponHolderSimulated" createVehicle [0,0,0];
+							_itemHolder setPos _x;
+							_itemHolder addItemCargoGlobal [ (selectRandom ( RAZ_fnc_lootArray select 4 ) ), 1];
+							_timer = time + _deletionTime;
+							_spawnedLoot pushBack _itemHolder;
+							if ( _enableDebug ) then {
+								_markerID = format [ "%1", _x ];
+								_markerText = format [ "%1", _lootSelection ];
+								_debug = createMarker [_markerID, _x];
+								_debug setMarkerType "mil_dot";
+								_debug setMarkerColor "ColorRed";
+								_debug setMarkerText _markerText;
+							}
 
-					if ( _lootSelection == 7 ) then {
+						}; // Spawn item loot
 
-						_itemHolder = "WeaponHolderSimulated" createVehicle [0,0,0];
-						_itemHolder setPos _x;
-						_itemHolder addItemCargoGlobal [ (selectRandom ( RAZ_fnc_lootArray select 5 ) ), 1];
-						if ( _enableDebug ) then {
-							_markerID = format [ "%1", _x ];
-							_markerText = format [ "%1", _lootSelection ];
-							_debug = createMarker [_markerID, _x];
-							_debug setMarkerType "mil_dot";
-							_debug setMarkerColor "ColorRed";
-							_debug setMarkerText _markerText;
-						}
+						if ( _lootSelection == 7 ) then {
 
-					}; // Spawn survival loot
+							_itemHolder = "WeaponHolderSimulated" createVehicle [0,0,0];
+							_itemHolder setPos _x;
+							_itemHolder addItemCargoGlobal [ (selectRandom ( RAZ_fnc_lootArray select 5 ) ), 1];
+							_timer = time + _deletionTime;
+							_spawnedLoot pushBack _itemHolder;
+							if ( _enableDebug ) then {
+								_markerID = format [ "%1", _x ];
+								_markerText = format [ "%1", _lootSelection ];
+								_debug = createMarker [_markerID, _x];
+								_debug setMarkerType "mil_dot";
+								_debug setMarkerColor "ColorRed";
+								_debug setMarkerText _markerText;
+							}
 
-				}; // End spawn distance and chance check...
+						}; // Spawn survival loot...
 
-			} forEach _buildingPositions; // End for each building position...
+					}; // End spawn distance and chance check...
 
-			_x setVariable ["buildingEmpty", false]; // Set the building variable to true...
+					if ( player distance _x > _spawnDistance ) then { { deleteVehicle _x } forEach _spawnedLoot; }; // Delete loot if player moves away...
 
-		}; // Enf building variavble check...
+				} forEach _buildingPositions; // End for each building position...
 
-	} forEach _buildings; // End for each building...
+				_x setVariable ["buildingEmpty", false]; // Set the building variable to false...
+
+			}; // End building variable check...
+
+			if ( player distance _x > _spawnDistance ) then { _x setVariable ["buildingEmpty", true]; }; // Set building to empty if player moves away...
+
+		} forEach _buildings; // End for each building...
+
+		sleep 1; // Time between spawn checks...
+
+	}; // End while loop...
 
 }; // End RAZ_fnc_spawnLoot...
-
-//====================================//
-// LETS CALL THE FUNCTION FOR TESTING //
-//====================================//
-
-_spawnLoot = [] spawn {
-
-	_spawnLoot = true;
-
-	while { _spawnLoot } do {
-
-		_lootSpawner = [] call RAZ_fnc_spawnLoot;
-
-		sleep 1;
-
-	};
-
-};
